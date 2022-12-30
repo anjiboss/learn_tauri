@@ -7,7 +7,7 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "basi_tauri",
+    "productName": "Hello World",
     "version": "0.0.0"
   },
   "tauri": {
@@ -16,6 +16,9 @@
       "shell": {
         "all": false,
         "open": true
+      },
+      "globalShortcut": {
+        "all": true
       }
     },
     "bundle": {
@@ -62,7 +65,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "basi_tauri",
+        "title": "Hello World",
         "width": 800
       }
     ]
