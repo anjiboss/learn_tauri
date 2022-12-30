@@ -34,10 +34,11 @@ async function registerNewCmd() {
   const registered = await isRegistered("CommandOrControl+Shift+U");
   const registering = async () => {
     await register("CommandOrControl+Shift+U", async () => {
-      const count: number = await invoke("count_many", { times: 5 });
-      if (counterElm) {
-        counterElm.textContent = count.toString();
-      }
+      // const count: number = await invoke("count_many", { times: 5 });
+      // if (counterElm) {
+      //   counterElm.textContent = count.toString();
+      // }
+      invoke("open_docs");
     });
   };
   if (!registered) {

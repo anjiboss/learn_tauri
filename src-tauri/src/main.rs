@@ -29,10 +29,26 @@ fn count_many(times: i32, counter: State<'_, Counter>) -> i32 {
     return *value;
 }
 
+#[tauri::command]
+async fn open_docs(handle: tauri::AppHandle) {
+    tauri::WindowBuilder::new(
+        &handle,
+        "test", /* the unique window label */
+        tauri::WindowUrl::External("https://tauri.app/".parse().unwrap()),
+    )
+    .build()
+    .unwrap();
+}
+
 fn main() {
     tauri::Builder::default()
         .manage(Counter(Default::default()))
-        .invoke_handler(tauri::generate_handler![greet, log_console, count_many])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            log_console,
+            count_many,
+            open_docs
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
