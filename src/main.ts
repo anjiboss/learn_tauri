@@ -9,7 +9,7 @@ let greetInputEl: HTMLInputElement | null;
 let greetMsgEl: HTMLElement | null;
 // let counterElm: HTMLElement | null;
 
-registerNewCmd();
+// registerNewCmd();
 
 async function greet() {
   if (greetMsgEl && greetInputEl) {

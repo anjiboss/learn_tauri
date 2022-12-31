@@ -5,7 +5,7 @@
 
 use std::sync::{Arc, Mutex};
 
-use tauri::{State, SystemTray, SystemTrayEvent, SystemTrayMenu};
+use tauri::{AppHandle, GlobalShortcutManager, State};
 
 #[derive(Default)]
 struct Counter(Arc<Mutex<i32>>);
@@ -40,33 +40,24 @@ async fn open_docs(handle: tauri::AppHandle) {
     .unwrap();
 }
 
+fn create_new_window(handle: &AppHandle) {
+    tauri::WindowBuilder::new(
+        handle,
+        "test", /* the unique window label */
+        tauri::WindowUrl::App("launcher.html".into()),
+    )
+    .always_on_top(true)
+    .hidden_title(true)
+    .center()
+    .inner_size(500.0, 300.0)
+    .decorations(false)
+    .resizable(false)
+    .build()
+    .unwrap();
+}
+
 fn main() {
-    // tauri::Builder::default()
-    //     .manage(Counter(Default::default()))
-    //     .invoke_handler(tauri::generate_handler![
-    //         greet,
-    //         log_console,
-    //         count_many,
-    //         open_docs
-    //     ])
-    //     .run(tauri::generate_context!())
-    //     .expect("error while running tauri application");
-    let tray_menu = SystemTrayMenu::new(); // insert the menu items here
     tauri::Builder::default()
-        .system_tray(SystemTray::new().with_menu(tray_menu))
-        .on_system_tray_event(|app, event| match event {
-            SystemTrayEvent::LeftClick {
-                position: _,
-                size: _,
-                ..
-            } => {
-                app.show().ok();
-                println!("system tray received a left click");
-            }
-            _ => {
-                println!("System Tray Clicked");
-            }
-        })
         .manage(Counter(Default::default()))
         .invoke_handler(tauri::generate_handler![
             greet,
@@ -76,7 +67,21 @@ fn main() {
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
-        .run(|_app_handle, event| match event {
+        // .expect("error while trying to hide application")
+        .run(|app_handle, event| match event {
+            tauri::RunEvent::Ready => {
+                app_handle.hide().unwrap();
+                let app_handle = app_handle.clone();
+                // register shortcuts
+                app_handle
+                    .global_shortcut_manager()
+                    .register("CommandOrControl+Shift+U", move || {
+                        println!("triggered");
+                        create_new_window(&app_handle);
+                    })
+                    .unwrap();
+            }
+            // run in background
             tauri::RunEvent::ExitRequested { api, .. } => {
                 api.prevent_exit();
             }
