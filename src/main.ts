@@ -7,7 +7,7 @@ import {
 
 let greetInputEl: HTMLInputElement | null;
 let greetMsgEl: HTMLElement | null;
-let counterElm: HTMLElement | null;
+// let counterElm: HTMLElement | null;
 
 registerNewCmd();
 
@@ -23,7 +23,7 @@ async function greet() {
 window.addEventListener("DOMContentLoaded", () => {
   greetInputEl = document.querySelector("#greet-input");
   greetMsgEl = document.querySelector("#greet-msg");
-  counterElm = document.querySelector("#counter");
+  // counterElm = document.querySelector("#counter");
 
   document
     .querySelector("#greet-button")
