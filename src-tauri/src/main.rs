@@ -5,7 +5,7 @@
 
 use std::sync::{Arc, Mutex};
 
-use tauri::{AppHandle, GlobalShortcutManager, State};
+use tauri::{GlobalShortcutManager, Manager, State};
 
 #[derive(Default)]
 struct Counter(Arc<Mutex<i32>>);
@@ -40,19 +40,14 @@ async fn open_docs(handle: tauri::AppHandle) {
     .unwrap();
 }
 
-fn create_new_window(handle: &AppHandle) {
-    tauri::WindowBuilder::new(
-        handle,
-        "test", /* the unique window label */
-        tauri::WindowUrl::App("launcher.html".into()),
-    )
-    .always_on_top(true)
-    .center()
-    .inner_size(500.0, 300.0)
-    .decorations(false)
-    .resizable(false)
-    .build()
-    .unwrap();
+#[tauri::command]
+fn close_window(window_lable: &str, _app: tauri::AppHandle, window: tauri::Window) {
+    println!(
+        "Requested to close the window: window_lable: {}, window: {}",
+        window_lable,
+        window.label()
+    );
+    window.hide().unwrap();
 }
 
 fn main() {
@@ -68,7 +63,8 @@ fn main() {
             greet,
             log_console,
             count_many,
-            open_docs
+            open_docs,
+            close_window
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
@@ -81,7 +77,12 @@ fn main() {
                     .global_shortcut_manager()
                     .register("CommandOrControl+Shift+U", move || {
                         println!("triggered");
-                        create_new_window(&app_handle);
+                        for (title, window) in app_handle.windows() {
+                            println!("{}", title);
+                            window.show().unwrap();
+                            window.set_focus().unwrap();
+                        }
+                        // create_new_window(&app_handle);
                     })
                     .unwrap();
             }

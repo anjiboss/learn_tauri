@@ -1,9 +1,10 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import {
-  isRegistered,
-  register,
-  unregister,
-} from "@tauri-apps/api/globalShortcut";
+import { appWindow } from "@tauri-apps/api/window";
+// import {
+//   isRegistered,
+//   register,
+//   unregister,
+// } from "@tauri-apps/api/globalShortcut";
 
 let greetInputEl: HTMLInputElement | null;
 let greetMsgEl: HTMLElement | null;
@@ -30,25 +31,32 @@ window.addEventListener("DOMContentLoaded", () => {
     ?.addEventListener("click", () => greet());
 });
 
-async function registerNewCmd() {
-  const registered = await isRegistered("CommandOrControl+Shift+U");
-  const registering = async () => {
-    await register("CommandOrControl+Shift+U", async () => {
-      // const count: number = await invoke("count_many", { times: 5 });
-      // if (counterElm) {
-      //   counterElm.textContent = count.toString();
-      // }
-      invoke("open_docs");
-    });
-  };
-  if (!registered) {
-    console.log("Registering shortcut");
-    registering();
-  } else {
-    // unregistering command
-    invoke("log_console", { phrase: "Unregistering shortcut" });
-    await unregister("CommandOrControl+Shift+U");
-    invoke("log_console", { str: "Reigster again" });
-    registering();
+// async function registerNewCmd() {
+//   const registered = await isRegistered("CommandOrControl+Shift+U");
+//   const registering = async () => {
+//     await register("CommandOrControl+Shift+U", async () => {
+//       // const count: number = await invoke("count_many", { times: 5 });
+//       // if (counterElm) {
+//       //   counterElm.textContent = count.toString();
+//       // }
+//       invoke("open_docs");
+//     });
+//   };
+//   if (!registered) {
+//     console.log("Registering shortcut");
+//     registering();
+//   } else {
+//     // unregistering command
+//     invoke("log_console", { phrase: "Unregistering shortcut" });
+//     await unregister("CommandOrControl+Shift+U");
+//     invoke("log_console", { str: "Reigster again" });
+//     registering();
+//   }
+// }
+
+await appWindow.onFocusChanged((event) => {
+  console.log(event);
+  if (!event.payload) {
+    invoke("close_window", { windowLable: event.windowLabel });
   }
-}
+});
