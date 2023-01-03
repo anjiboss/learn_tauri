@@ -5,7 +5,7 @@
 
 use std::sync::{Arc, Mutex};
 
-use tauri::{AppHandle, GlobalShortcutManager, State};
+use tauri::{GlobalShortcutManager, Manager, State};
 
 #[derive(Default)]
 struct Counter(Arc<Mutex<i32>>);
@@ -40,21 +40,6 @@ async fn open_docs(handle: tauri::AppHandle) {
     .unwrap();
 }
 
-fn create_new_window(handle: &AppHandle) {
-    tauri::WindowBuilder::new(
-        handle,
-        "test", /* the unique window label */
-        tauri::WindowUrl::App("launcher.html".into()),
-    )
-    .always_on_top(true)
-    .center()
-    .inner_size(500.0, 300.0)
-    .decorations(false)
-    .resizable(false)
-    .build()
-    .unwrap();
-}
-
 fn main() {
     tauri::Builder::default()
         .manage(Counter(Default::default()))
@@ -81,7 +66,11 @@ fn main() {
                     .global_shortcut_manager()
                     .register("CommandOrControl+Shift+U", move || {
                         println!("triggered");
-                        create_new_window(&app_handle);
+                        for (title, window) in app_handle.windows() {
+                            println!("{}", title);
+                            window.show().unwrap();
+                        }
+                        // create_new_window(&app_handle);
                     })
                     .unwrap();
             }
