@@ -40,6 +40,16 @@ async fn open_docs(handle: tauri::AppHandle) {
     .unwrap();
 }
 
+#[tauri::command]
+fn close_window(window_lable: &str, _app: tauri::AppHandle, window: tauri::Window) {
+    println!(
+        "Requested to close the window: window_lable: {}, window: {}",
+        window_lable,
+        window.label()
+    );
+    window.hide().unwrap();
+}
+
 fn main() {
     tauri::Builder::default()
         .manage(Counter(Default::default()))
@@ -53,7 +63,8 @@ fn main() {
             greet,
             log_console,
             count_many,
-            open_docs
+            open_docs,
+            close_window
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
@@ -69,6 +80,7 @@ fn main() {
                         for (title, window) in app_handle.windows() {
                             println!("{}", title);
                             window.show().unwrap();
+                            window.set_focus().unwrap();
                         }
                         // create_new_window(&app_handle);
                     })

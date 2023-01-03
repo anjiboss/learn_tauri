@@ -55,8 +55,8 @@ window.addEventListener("DOMContentLoaded", () => {
 // }
 
 await appWindow.onFocusChanged((event) => {
-  invoke("log_console", { phrase: "Focus changed, " + JSON.stringify(event) });
+  console.log(event);
+  if (!event.payload) {
+    invoke("close_window", { windowLable: event.windowLabel });
+  }
 });
-
-// you need to call unlisten if your handler goes out of scope e.g. the component is unmounted
-// unlisten();
