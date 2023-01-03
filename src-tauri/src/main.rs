@@ -3,56 +3,12 @@
     windows_subsystem = "windows"
 )]
 
-use std::sync::{Arc, Mutex};
-
-use tauri::{GlobalShortcutManager, Manager, State};
-
-#[derive(Default)]
-struct Counter(Arc<Mutex<i32>>);
-
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
-#[tauri::command]
-fn log_console(phrase: &str) {
-    println!("{}", phrase);
-}
-
-#[tauri::command]
-fn count_many(times: i32, counter: State<'_, Counter>) -> i32 {
-    let mut value = counter.0.lock().unwrap();
-    *value += times;
-    println!("Counter: {}", *value);
-    return *value;
-}
-
-#[tauri::command]
-async fn open_docs(handle: tauri::AppHandle) {
-    tauri::WindowBuilder::new(
-        &handle,
-        "test", /* the unique window label */
-        tauri::WindowUrl::External("https://tauri.app/".parse().unwrap()),
-    )
-    .build()
-    .unwrap();
-}
-
-#[tauri::command]
-fn close_window(window_lable: &str, _app: tauri::AppHandle, window: tauri::Window) {
-    println!(
-        "Requested to close the window: window_lable: {}, window: {}",
-        window_lable,
-        window.label()
-    );
-    window.hide().unwrap();
-}
+mod cmd;
+use tauri::{GlobalShortcutManager, Manager};
 
 fn main() {
     tauri::Builder::default()
-        .manage(Counter(Default::default()))
+        .manage(cmd::Counter(Default::default()))
         .on_window_event(|event| match event.event() {
             tauri::WindowEvent::CloseRequested { .. } => {
                 event.window().hide().unwrap();
@@ -60,11 +16,11 @@ fn main() {
             _ => {}
         })
         .invoke_handler(tauri::generate_handler![
-            greet,
-            log_console,
-            count_many,
-            open_docs,
-            close_window
+            cmd::greet,
+            cmd::log_console,
+            cmd::count_many,
+            cmd::open_docs,
+            cmd::close_window
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
