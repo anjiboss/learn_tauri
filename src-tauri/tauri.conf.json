@@ -70,7 +70,8 @@
         "height": 600,
         "resizable": true,
         "title": "Hello World",
-        "width": 800
+        "width": 800,
+        "visible": false
       }
     ]
   }

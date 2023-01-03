@@ -47,7 +47,6 @@ fn create_new_window(handle: &AppHandle) {
         tauri::WindowUrl::App("launcher.html".into()),
     )
     .always_on_top(true)
-    .hidden_title(true)
     .center()
     .inner_size(500.0, 300.0)
     .decorations(false)
@@ -59,6 +58,12 @@ fn create_new_window(handle: &AppHandle) {
 fn main() {
     tauri::Builder::default()
         .manage(Counter(Default::default()))
+        .on_window_event(|event| match event.event() {
+            tauri::WindowEvent::CloseRequested { .. } => {
+                event.window().hide().unwrap();
+            }
+            _ => {}
+        })
         .invoke_handler(tauri::generate_handler![
             greet,
             log_console,
@@ -70,7 +75,6 @@ fn main() {
         // .expect("error while trying to hide application")
         .run(|app_handle, event| match event {
             tauri::RunEvent::Ready => {
-                app_handle.hide().unwrap();
                 let app_handle = app_handle.clone();
                 // register shortcuts
                 app_handle
