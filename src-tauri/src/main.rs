@@ -4,9 +4,17 @@
 )]
 
 mod cmd;
+mod config;
+use std::time::Instant;
 use tauri::{GlobalShortcutManager, Manager};
 
 fn main() {
+    let start = Instant::now();
+    let apps = config::get_all_applications();
+    println!(
+        "Time elapsed in expensive_function() is: {:?}",
+        start.elapsed()
+    );
     tauri::Builder::default()
         .manage(cmd::Counter(Default::default()))
         .on_window_event(|event| match event.event() {
@@ -24,7 +32,6 @@ fn main() {
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
-        // .expect("error while trying to hide application")
         .run(|app_handle, event| match event {
             tauri::RunEvent::Ready => {
                 let app_handle = app_handle.clone();
@@ -36,6 +43,7 @@ fn main() {
                         for (title, window) in app_handle.windows() {
                             println!("{}", title);
                             window.show().unwrap();
+                            window.center().unwrap();
                             window.set_focus().unwrap();
                         }
                         // create_new_window(&app_handle);

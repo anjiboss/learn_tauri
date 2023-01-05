@@ -18,8 +18,22 @@
     "allowlist": {
       "all": false,
       "shell": {
-        "all": false,
-        "open": true
+        "execute": true,
+        "scope": [
+          {
+            "name": "open_app",
+            "cmd": "open",
+            "args": [
+              "-b",
+              {
+                "validator": "\\."
+              },
+              {
+                "validator": "\\."
+              }
+            ]
+          }
+        ]
       },
       "globalShortcut": {
         "all": true
@@ -68,11 +82,11 @@
       {
         "fullscreen": false,
         "height": 600,
-        "resizable": true,
         "title": "Hello World",
         "width": 800,
         "visible": false,
-        "decorations": false
+        "decorations": false,
+        "focus": false
       }
     ]
   }

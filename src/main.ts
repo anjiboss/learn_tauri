@@ -1,62 +1,24 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { appWindow } from "@tauri-apps/api/window";
-// import {
-//   isRegistered,
-//   register,
-//   unregister,
-// } from "@tauri-apps/api/globalShortcut";
+import { Command } from "@tauri-apps/api/shell";
 
-let greetInputEl: HTMLInputElement | null;
-let greetMsgEl: HTMLElement | null;
-// let counterElm: HTMLElement | null;
+window.addEventListener("DOMContentLoaded", app);
 
-// registerNewCmd();
+async function app() {
+  await appWindow.onFocusChanged((event) => {
+    console.log(event);
+    if (!event.payload) {
+      invoke("close_window", { windowLable: event.windowLabel });
+    }
 
-async function greet() {
-  if (greetMsgEl && greetInputEl) {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    greetMsgEl.textContent = await invoke("greet", {
-      name: greetInputEl.value,
+    const testBtn = document.getElementById("testBtn");
+    testBtn?.addEventListener("click", () => {
+      console.log("cicked");
+      new Command("open_app", [
+        "-b",
+        "com.apple.systempreferences",
+        "/System/Library/PreferencePanes/Security.prefPane",
+      ]).spawn();
     });
-  }
+  });
 }
-
-window.addEventListener("DOMContentLoaded", () => {
-  greetInputEl = document.querySelector("#greet-input");
-  greetMsgEl = document.querySelector("#greet-msg");
-  // counterElm = document.querySelector("#counter");
-
-  document
-    .querySelector("#greet-button")
-    ?.addEventListener("click", () => greet());
-});
-
-// async function registerNewCmd() {
-//   const registered = await isRegistered("CommandOrControl+Shift+U");
-//   const registering = async () => {
-//     await register("CommandOrControl+Shift+U", async () => {
-//       // const count: number = await invoke("count_many", { times: 5 });
-//       // if (counterElm) {
-//       //   counterElm.textContent = count.toString();
-//       // }
-//       invoke("open_docs");
-//     });
-//   };
-//   if (!registered) {
-//     console.log("Registering shortcut");
-//     registering();
-//   } else {
-//     // unregistering command
-//     invoke("log_console", { phrase: "Unregistering shortcut" });
-//     await unregister("CommandOrControl+Shift+U");
-//     invoke("log_console", { str: "Reigster again" });
-//     registering();
-//   }
-// }
-
-await appWindow.onFocusChanged((event) => {
-  console.log(event);
-  if (!event.payload) {
-    invoke("close_window", { windowLable: event.windowLabel });
-  }
-});
