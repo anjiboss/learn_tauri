@@ -8,6 +8,11 @@ mod config;
 use std::time::Instant;
 use tauri::{GlobalShortcutManager, Manager};
 
+#[derive(Clone, serde::Serialize)]
+struct Payload {
+    apps: config::macos_apps::MacApps,
+}
+
 fn main() {
     let start = Instant::now();
     let apps = config::get_all_applications();
@@ -35,6 +40,7 @@ fn main() {
         .run(|app_handle, event| match event {
             tauri::RunEvent::Ready => {
                 let app_handle = app_handle.clone();
+                app_handle.emit_all("take_apps", Payload { apps: apps });
                 // register shortcuts
                 app_handle
                     .global_shortcut_manager()
