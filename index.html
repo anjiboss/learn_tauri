@@ -14,6 +14,16 @@
       .logo.typescript:hover {
         filter: drop-shadow(0 0 2em #2d79c7);
       }
+
+      #app_container {
+      }
+      .app {
+        background: rgb(238, 234, 221);
+        height: 70px;
+        margin: 5px 0;
+        cursor: pointer;
+        /* width: 150px; */
+      }
     </style>
   </head>
 
@@ -21,12 +31,12 @@
     <div class="container">
       <div class="row">
         <div>
-          <input id="greet-input" placeholder="Enter a name..." autofocus />
-          <button id="testBtn" type="button">Greet</button>
+          <input id="searcher" placeholder="Enter a name..." autofocus />
         </div>
       </div>
-
-      <p id="greet-msg"></p>
+      <div id="app_container">
+        <!-- Contain application list -->
+      </div>
     </div>
   </body>
 </html>
